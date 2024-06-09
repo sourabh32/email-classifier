@@ -18,3 +18,5 @@ export const clasifyMerge = (emails,classification) =>{
     
     
 }
+
+

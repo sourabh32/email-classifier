@@ -12,18 +12,27 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ClassifiedEmail, Email } from "@/lib/types";
 
+import SetApiKeyDialog from "@/components/DrawerForKey";
+import { signIn, useSession } from "next-auth/react";
+
 export default function Home() {
   const [emails, setEmails] = useState<Email[] | ClassifiedEmail[]>([]);
   const [number, setNumber] = useState("10");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
   const apiKey = window.localStorage.getItem('openai-api-key');
+  const {data,status} = useSession()
 
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      signIn(); 
+    }
+  }, [status]);
   const fetchEmails = async () => {
     setLoading(true);
     setError(null);
     try {
-      
+
       const res = await getEmails(number);
 
       setEmails(res);
@@ -37,11 +46,11 @@ export default function Home() {
   };
 
   useEffect(() => {
-  
+
     fetchEmails();
   }, [number]);
   const handleClassify = async () => {
-    if(!apiKey) {
+    if (!apiKey) {
       toast("no api key found")
       return;
     }
@@ -65,7 +74,7 @@ export default function Home() {
       setLoading(false);
     }
   };
-  
+
 
   return (
     <main className="flex min-h-screen flex-col gap-2  p-10">
@@ -80,9 +89,17 @@ export default function Home() {
             <SelectItem value="20">20</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={handleClassify}>
-          {loading ? "Loading..." : "Clasify"}
-        </Button>
+
+        {
+          apiKey ? (<Button onClick={handleClassify}>
+            {loading ? "Loading..." : "Clasify"}
+          </Button>) : (<SetApiKeyDialog />)
+        }
+
+
+
+
+
 
       </div>
 
@@ -100,11 +117,11 @@ export default function Home() {
 
 
 
-const EmailList = ({ emails }:{emails:Email[]}) => {
+const EmailList = ({ emails }: { emails: Email[] }) => {
   return (
     <div className="max-w-4xl p-2">
       <ul className="space-y-4">
-        {emails.length > 0 && emails.map((email:any, index:number) => (
+        {emails.length > 0 && emails.map((email: any, index: number) => (
           <li key={index}>
             <Drawer>
               <DrawerTrigger className="font-bold">
