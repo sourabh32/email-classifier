@@ -20,7 +20,8 @@ export default function Home() {
   const [number, setNumber] = useState("10");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
-  const apiKey = window.localStorage.getItem('openai-api-key');
+  const apiKey = typeof window !== 'undefined' ? window.localStorage.getItem('openai-api-key') : null;
+
   const {data,status} = useSession()
 
   useEffect(() => {
