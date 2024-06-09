@@ -16,7 +16,7 @@ import SetApiKeyDialog from "@/components/DrawerForKey";
 import { signIn, useSession } from "next-auth/react";
 
 export default function Home() {
-  const [emails, setEmails] = useState<Email[] | ClassifiedEmail[]>([]);
+  const [emails, setEmails] = useState([]);
   const [number, setNumber] = useState("10");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
