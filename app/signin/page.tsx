@@ -19,7 +19,7 @@ export default function SignIn() {
             <button
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg mb-4"
                 onClick={async () => {
-                    await signIn("google",{callbackUrl:"/"});
+                    await signIn("google",{callbackUrl:"/mails"});
                     toast("Google signed in sucessfully")
                 }}
             >
