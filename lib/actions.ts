@@ -18,7 +18,7 @@ export const getEmails = async (number:string) => {
   
   if (!session) {
     console.error("No session found");
-    return { error: "No session found" };
+    return null;
   }
 
   const accessToken = session.accessToken;
@@ -26,7 +26,7 @@ export const getEmails = async (number:string) => {
 
   if (!accessToken || !refreshToken) {
     console.error("Access token or refresh token missing");
-    return { error: "Access token or refresh token missing" };
+    return null
   }
 
   const oAuth2Client = new google.auth.OAuth2({
@@ -85,10 +85,12 @@ export const getEmails = async (number:string) => {
       return { from: headers.From, subject: headers.Subject, date: headers.Date, emailBody };
     });
 
+    
+
     return finalOutput;
   } catch (error) {
     console.error("Error fetching emails:", error);
-    return { error: "Failed to fetch emails" };
+    return null
   }
 };
 

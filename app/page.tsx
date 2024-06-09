@@ -17,7 +17,7 @@ import { signIn, useSession } from "next-auth/react";
 type errorType = { emails: never[]; error?: undefined; }
 type errorType2 = { error: string; emails?: undefined; }
 export default function Home() {
-  const [emails, setEmails] = useState<Email[]  | errorType | errorType2>([]);
+  const [emails, setEmails] = useState<any>([]);
   const [number, setNumber] = useState("10");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
@@ -35,7 +35,7 @@ export default function Home() {
     try {
 
       const res = await getEmails(number);
-
+  
       setEmails(res);
       toast("fetched emails...")
     } catch (err) {
@@ -58,6 +58,7 @@ export default function Home() {
     try {
       setLoading(true);
       toast("wait till magic happens!")
+      if(emails ==null )  return;
       const newMails = emails.map(email => email.subject);
       const response = await classifyMail(newMails, apiKey);
       if (!response) {
