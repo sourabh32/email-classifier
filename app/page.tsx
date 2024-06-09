@@ -14,7 +14,7 @@ import { ClassifiedEmail, Email } from "@/lib/types";
 
 import SetApiKeyDialog from "@/components/DrawerForKey";
 import { signIn, useSession } from "next-auth/react";
-type errorType = { error: string; emails?: undefined; }
+type errorType = { emails: never[]; error?: undefined; }
 export default function Home() {
   const [emails, setEmails] = useState<Email[]  | errorType>([]);
   const [number, setNumber] = useState("10");
