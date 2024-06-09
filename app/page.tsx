@@ -7,7 +7,7 @@ import React from 'react'
 const Page = () => {
   const session = getServerSession(authOptions)
 
-  if (!session) {
+  if (!session.user) {
     signIn()
   }
   
