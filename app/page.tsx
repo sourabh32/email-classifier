@@ -14,64 +14,103 @@ import { ClassifiedEmail, Email } from "@/lib/types";
 
 import SetApiKeyDialog from "@/components/DrawerForKey";
 import { signIn, useSession } from "next-auth/react";
+type errorType = { error: string; emails?: undefined; }
 export default function Home() {
-  const [emails, setEmails] = useState([]);
+  const [emails, setEmails] = useState<Email[]  | errorType>([]);
   const [number, setNumber] = useState("10");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
   const apiKey = window.localStorage.getItem('openai-api-key');
-  const { data, status } = useSession();
+  const {data,status} = useSession()
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       signIn(); 
     }
   }, [status]);
-
   const fetchEmails = async () => {
     setLoading(true);
     setError(null);
     try {
+
       const res = await getEmails(number);
+
       setEmails(res);
-      toast("Fetched emails...");
+      toast("fetched emails...")
     } catch (err) {
       setError('Failed to fetch emails');
-      toast('Failed to fetch emails');
+      toast('Failed to fetch emails')
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+
     fetchEmails();
   }, [number]);
-
   const handleClassify = async () => {
     if (!apiKey) {
-      toast("No API key found");
+      toast("no api key found")
       return;
     }
     try {
       setLoading(true);
-      toast("Wait till magic happens!");
+      toast("wait till magic happens!")
       const newMails = emails.map(email => email.subject);
       const response = await classifyMail(newMails, apiKey);
       if (!response) {
         toast("No response from OpenAI");
-        return;
+        return
       }
       const parsedResponse = JSON.parse(response);
       const res = clasifyMerge(emails, parsedResponse);
       setEmails(res);
-      toast("Emails classified");
+      toast("emails! classified")
     } catch (error) {
       console.error("Error classifying emails:", error);
-      toast("Failed to classify, check API key");
+      toast("Failed to classify check api key")
     } finally {
       setLoading(false);
     }
   };
+
+
+  return (
+    <main className="flex min-h-screen flex-col gap-2  p-10">
+      <div className="flex justify-between">
+        <Select onValueChange={setNumber} defaultValue={number}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select a number of emails to display" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="15">15</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {
+          apiKey ? (<Button onClick={handleClassify}>
+            {loading ? "Loading..." : "Clasify"}
+          </Button>) : (<SetApiKeyDialog />)
+        }
+
+
+
+
+
+
+      </div>
+
+      <h1 className="text-2xl font-bold mb-4">Inbox</h1>
+
+      {loading && <div>Loading emails...</div>}
+      {error && <div className="text-red-500">{error}</div>}
+      {!loading && !error && <EmailList emails={emails} />}
+    </main>
+  );
+}
 
 
 
