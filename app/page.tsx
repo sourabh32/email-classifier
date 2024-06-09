@@ -59,7 +59,7 @@ export default function Home() {
       setLoading(true);
       toast("wait till magic happens!")
       if(emails ==null )  return;
-      const newMails = emails.map(email => email.subject);
+      const newMails = emails.map((email:any) => email.subject);
       const response = await classifyMail(newMails, apiKey);
       if (!response) {
         toast("No response from OpenAI");
